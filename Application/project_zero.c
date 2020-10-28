@@ -93,6 +93,8 @@
 #include "ti_ble_config.h"
 #include <util.h>
 
+#include "sunlightService.h"
+
 /*********************************************************************
  * MACROS
  */
@@ -620,6 +622,7 @@ static void ProjectZero_init(void)
     LedService_AddService(selfEntity);
     ButtonService_AddService(selfEntity);
     DataService_AddService(selfEntity);
+    SunlightService_AddService(selfEntity);
 
     // Open the OAD module and add the OAD service to the application
     if(OAD_SUCCESS != OAD_open(OAD_DEFAULT_INACTIVITY_TIME))
