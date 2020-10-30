@@ -4,7 +4,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROGRAM.CC2652RB1F.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="${build_artifact:project_zero_CC2652RB_LAUNCHXL_tirtos_ccs}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT.CC2652RB1F.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="project_zero_CC2652RB_LAUNCHXL_tirtos_ccs"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:project_zero_CC2652RB_LAUNCHXL_tirtos_ccs}"/>
-<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.CC2652RB1F.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="C:\Users\Furkan\workspace_v10\project_zero_CC2652RB_LAUNCHXL_tirtos_ccs\Release\project_zero_CC2652RB_LAUNCHXL_tirtos_ccs.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM.CC2652RB1F.ccxml.Texas Instruments XDS110 USB Debug Probe/Cortex_M4_0" value="/Users/furkanucar/git/projectZero/Release/project_zero_CC2652RB_LAUNCHXL_tirtos_ccs.out"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/project_zero_CC2652RB_LAUNCHXL_tirtos_ccs"/>
 </listAttribute>

@@ -329,6 +329,9 @@ static Clock_Struct clkRpaRead;
 static uint8_t button0State = 0;
 static uint8_t button1State = 0;
 
+//service variable
+static uint32_t myVar = 0;
+
 // Variable used to store the number of messages pending once OAD completes
 // The application cannot reboot until all pending messages are sent
 static uint8_t numPendingMsgs = 0;
@@ -2073,6 +2076,11 @@ static void ProjectZero_handleButtonPress(pzButtonState_t *pState)
         ButtonService_SetParameter(BS_BUTTON0_ID,
                                    sizeof(pState->state),
                                    &pState->state);
+
+        SunlightService_SetParameter(SUNLIGHTSERVICE_SUNLIGHTVALUE_ID,
+                                             SUNLIGHTSERVICE_SUNLIGHTVALUE_LEN,
+                                             &myVar);
+        myVar++;
         break;
     case CONFIG_PIN_BTN2:
         ButtonService_SetParameter(BS_BUTTON1_ID,

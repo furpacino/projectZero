@@ -1,6 +1,6 @@
 #
 # This file was generated based on the configuration script:
-#     C:\Users\Furkan\workspace_v10\project_zero_CC2652RB_LAUNCHXL_tirtos_ccs\project_zero_app.cfg
+#     /Users/furkanucar/git/projectZero/project_zero_app.cfg
 #
 # This makefile may be included in other makefiles that need to build
 # the libraries containing the compiled source files generated as
@@ -14,7 +14,7 @@
 #
 # The absolute path to the generated source directory (at the time the
 # sources were generated) is:
-#    C:\Users\Furkan\workspace_v10\project_zero_CC2652RB_LAUNCHXL_tirtos_ccs\src
+#    /Users/furkanucar/git/projectZero/src
 #
 GEN_SRC_DIR ?= ../src
 

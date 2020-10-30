@@ -188,6 +188,13 @@ extern bStatus_t SunlightService_AddService( uint8_t rspTaskId )
 {
   uint8_t status;
 
+  // Allocate Client Characteristic Configuration table
+    sunlightService_SunlightValueConfig = (gattCharCfg_t *)ICall_malloc( sizeof(gattCharCfg_t) * linkDBNumConns );
+    if ( sunlightService_SunlightValueConfig == NULL )
+    {
+      return ( bleMemAllocError );
+    }
+
   // Register GATT attribute list and CBs with GATT Server App
   status = GATTServApp_RegisterService( sunlightServiceAttrTbl,
                                         GATT_NUM_ATTRS( sunlightServiceAttrTbl ),
