@@ -121,7 +121,7 @@ extern void AssertHandler(uint8_t assertCause,
  * @return      None.
  */
 int main()
-{
+    {
   /* Register Application callback to trap asserts raised in the Stack */
   RegisterAssertCback(AssertHandler);
 

@@ -69,14 +69,16 @@ CONST uint8_t sunlightServiceUUID[ATT_BT_UUID_SIZE] =
 {
   LO_UINT16(SUNLIGHTSERVICE_SERV_UUID), HI_UINT16(SUNLIGHTSERVICE_SERV_UUID)
 };
-// sunlightValue UUID
-// Todo - 16 ya degistirecelck websitesindeki tanima bak
 
-CONST uint8_t sunlightService_SunlightValueUUID[ATT_BT_UUID_SIZE] =
+
+
+// sunlightValue UUID
+ATT_UUID_SIZECONST uint8_t sunlightService_SunlightValueUUID[ATT_UUID_SIZE] =
 {
   //TI_BASE_UUID_128(SUNLIGHTSERVICE_SUNLIGHTVALUE_UUID)
- LO_UINT16(SUNLIGHTSERVICE_SERV_UUID), HI_UINT16(SUNLIGHTSERVICE_SERV_UUID)
+ TI_BASE_UUID_128(SUNLIGHTSERVICE_SUNLIGHTVALUE_UUID)
 };
+
 
 
 /*********************************************************************
@@ -128,7 +130,7 @@ static gattAttribute_t sunlightServiceAttrTbl[] =
 
     // sunlightService Characteristic Value
     {
-      { ATT_BT_UUID_SIZE, sunlightService_SunlightValueUUID },
+      { ATT_UUID_SIZE, sunlightService_SunlightValueUUID },
       GATT_PERMIT_READ,
       0,
       sunlightService_SunlightValueVal
