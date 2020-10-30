@@ -129,6 +129,10 @@
                                               PZ_OAD_QUEUE_EVT | \
                                               PZ_OAD_COMPLETE_EVT)
 
+
+// Default timeout of sunlight timer
+#define DEFAULT_SUNLIGHT_TIMEOUT              5000  // SOLUTION
+
 // Types of messages that can be sent to the user application task from other
 // tasks or interrupts. Note: Messages from BLE Stack are sent differently.
 #define PZ_SERVICE_WRITE_EVT     0  /* A characteristic value has been written     */
@@ -142,6 +146,7 @@
 #define PZ_SEND_PARAM_UPD_EVT    8  /* Request parameter update req be sent        */
 #define PZ_CONN_EVT              9  /* Connection Event End notice                 */
 #define PZ_READ_RPA_EVT         10  /* Read RPA event                              */
+#define PZ_MSG_PERIODIC_TIMER   11  /* Read RPA event                              */
 
 // Supervision timeout conversion rate to miliseconds
 #define CONN_TIMEOUT_MS_CONVERSION            10
@@ -252,6 +257,8 @@ typedef struct
  */
 // Task configuration
 Task_Struct pzTask;
+// Clock struct for Periodic Notifications
+static Clock_Struct myClock;
 #if defined __TI_COMPILER_VERSION__
 #pragma DATA_ALIGN(appTaskStack, 8)
 #else
@@ -448,6 +455,7 @@ static void ProjectZero_checkSvcChgndFlag(uint32_t flag);
 static void ProjectZero_bootManagerCheck(PIN_Handle buttonPinHandle,
                                          uint8_t revertIo,
                                          uint8_t eraseIo);
+static void myClockSwiFxn(uintptr_t arg0);
 
 /*********************************************************************
  * EXTERN FUNCTIONS
@@ -557,6 +565,17 @@ static void ProjectZero_init(void)
     // Note: Used to transfer control to application thread from e.g. interrupts.
     Queue_construct(&appMsgQueue, NULL);
     appMsgQueueHandle = Queue_handle(&appMsgQueue);
+
+    // clockParams is only used during init and can be on the stack.
+    Clock_Params myClockParams;
+    // Insert default params
+    Clock_Params_init(&myClockParams);
+    // Set a period, so it times out periodically without jitter
+    myClockParams.period = DEFAULT_SUNLIGHT_TIMEOUT * (1000/Clock_tickPeriod),
+    // Initialize the clock object / Clock_Struct previously added globally.
+    Clock_construct(&myClock, myClockSwiFxn,
+                    0, // Initial delay before first timeout
+                    &myClockParams);
 
     // ******************************************************************
     // Hardware initialization
@@ -1108,6 +1127,14 @@ static void ProjectZero_processApplicationMessage(pzMsg_t *pMsg)
         }
         break;
       }
+      case PZ_MSG_PERIODIC_TIMER:
+      {
+          myVar++;
+          SunlightService_SetParameter(SUNLIGHTSERVICE_SUNLIGHTVALUE_ID,
+                                                       SUNLIGHTSERVICE_SUNLIGHTVALUE_LEN,
+                                                       &myVar);
+
+      }
       default:
         break;
     }
@@ -1253,6 +1280,7 @@ static void ProjectZero_processGapMessage(gapEventHdr_t *pMsg)
             Log_info1("Connected. Peer address: " \
                         ANSI_COLOR(FG_GREEN)"%s"ANSI_COLOR(ATTR_RESET),
                       (uintptr_t)addrStr);
+            Clock_start(Clock_handle(&myClock)); //SOLUTION
 
             // If we are just connecting after an OAD send SVC changed
             if(sendSvcChngdOnNextBoot == TRUE)
@@ -3030,6 +3058,13 @@ static void ProjectZero_bootManagerCheck(PIN_Handle buttonPinHandle,
 
         return;
     }
+}
+
+void myClockSwiFxn(uintptr_t arg0)
+{
+  // Can't call blocking TI-RTOS calls or BLE APIs from here.
+  // .. Send a message to the Task that something is afoot.
+  ProjectZero_enqueueMsg(PZ_MSG_PERIODIC_TIMER, NULL); // Not sending any data here, just a signal
 }
 
 /*********************************************************************
