@@ -73,7 +73,7 @@ CONST uint8_t sunlightServiceUUID[ATT_BT_UUID_SIZE] =
 
 
 // sunlightValue UUID
-ATT_UUID_SIZECONST uint8_t sunlightService_SunlightValueUUID[ATT_UUID_SIZE] =
+CONST uint8_t sunlightService_SunlightValueUUID[ATT_UUID_SIZE] =
 {
   //TI_BASE_UUID_128(SUNLIGHTSERVICE_SUNLIGHTVALUE_UUID)
  TI_BASE_UUID_128(SUNLIGHTSERVICE_SUNLIGHTVALUE_UUID)
@@ -229,14 +229,32 @@ bStatus_t SunlightService_RegisterAppCBs( sunlightServiceCBs_t *appCallbacks )
  */
 bStatus_t SunlightService_SetParameter( uint8_t param, uint16_t len, void *value )
 {
-  bStatus_t ret = SUCCESS;
-  switch ( param )
-  {
-    default:
-      ret = INVALIDPARAMETER;
-      break;
-  }
-  return ret;
+    bStatus_t ret = SUCCESS;
+      switch ( param )
+      {
+
+
+
+        case SUNLIGHTSERVICE_SUNLIGHTVALUE_ID:
+              if ( len == SUNLIGHTSERVICE_SUNLIGHTVALUE_LEN )
+              {
+                memcpy(sunlightService_SunlightValueVal, value, len);
+
+                // Try to send notification.
+                GATTServApp_ProcessCharCfg( sunlightService_SunlightValueConfig, (uint8_t *)&sunlightService_SunlightValueVal, FALSE,
+                                            sunlightServiceAttrTbl, GATT_NUM_ATTRS( sunlightServiceAttrTbl ),
+                                            INVALID_TASK_ID,  sunlightService_ReadAttrCB);
+              }
+          else
+          {
+            ret = bleInvalidRange;
+          }
+          break;
+
+
+      }
+
+      return ( ret );
 }
 
 
@@ -283,7 +301,21 @@ static bStatus_t sunlightService_ReadAttrCB( uint16_t connHandle, gattAttribute_
 {
   bStatus_t status = SUCCESS;
 
-  {
+  // See if request is regarding the SunlightValue Characteristic Value
+ if ( ! memcmp(pAttr->type.uuid, sunlightService_SunlightValueUUID, pAttr->type.len) )
+   {
+     if ( offset > SUNLIGHTSERVICE_SUNLIGHTVALUE_LEN )  // Prevent malicious ATT ReadBlob offsets.
+     {
+       status = ATT_ERR_INVALID_OFFSET;
+     }
+     else
+     {
+       *pLen = MIN(maxLen, SUNLIGHTSERVICE_SUNLIGHTVALUE_LEN - offset);  // Transmit as much as possible
+       memcpy(pValue, pAttr->pValue + offset, *pLen);
+     }
+   }
+
+ else  {
     // If we get here, that means you've forgotten to add an if clause for a
     // characteristic value attribute in the attribute table that has READ permissions.
     *pLen = 0;
@@ -337,3 +369,6 @@ static bStatus_t sunlightService_WriteAttrCB( uint16_t connHandle, gattAttribute
 
   return status;
 }
+
+
+

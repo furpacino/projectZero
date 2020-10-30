@@ -662,6 +662,7 @@ static void ProjectZero_init(void)
     // Placeholder variable for characteristic intialization
     uint8_t initVal[40] = {0};
     uint8_t initString[] = "This is a pretty long string, isn't it!";
+    uint8_t initSunLight[SUNLIGHTSERVICE_SUNLIGHTVALUE_LEN] = {1,2,2,2};
 
     // Initalization of characteristics in LED_Service that can provide data.
     LedService_SetParameter(LS_LED0_ID, LS_LED0_LEN, initVal);
@@ -674,6 +675,9 @@ static void ProjectZero_init(void)
     // Initalization of characteristics in Data_Service that can provide data.
     DataService_SetParameter(DS_STRING_ID, sizeof(initString), initString);
     DataService_SetParameter(DS_STREAM_ID, DS_STREAM_LEN, initVal);
+
+    // Initalization of SunlightService Value
+   SunlightService_SetParameter(SUNLIGHTSERVICE_SUNLIGHTVALUE_ID, SUNLIGHTSERVICE_SUNLIGHTVALUE_LEN, &initSunLight);
 
     // Start Bond Manager and register callback
     VOID GAPBondMgr_Register(&ProjectZero_BondMgrCBs);
