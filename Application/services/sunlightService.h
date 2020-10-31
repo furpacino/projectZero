@@ -62,6 +62,11 @@ extern "C"
 #define SUNLIGHTSERVICE_SUNLIGHTVALUE_UUID 0x2BAD
 #define SUNLIGHTSERVICE_SUNLIGHTVALUE_LEN  4
 
+//  Characteristic defines
+#define SUNLIGHTSERVICE_UPDATEPERIOD_ID   1
+#define SUNLIGHTSERVICE_UPDATEPERIOD_UUID 0x2BAE
+#define SUNLIGHTSERVICE_UPDATEPERIOD_LEN  2
+
 /*********************************************************************
  * TYPEDEFS
  */

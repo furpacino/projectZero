@@ -79,7 +79,11 @@ CONST uint8_t sunlightService_SunlightValueUUID[ATT_UUID_SIZE] =
  TI_BASE_UUID_128(SUNLIGHTSERVICE_SUNLIGHTVALUE_UUID)
 };
 
-
+// updatePeriod UUID
+CONST uint8_t sunlightService_UpdatePeriodUUID[ATT_UUID_SIZE] =
+{
+  TI_BASE_UUID_128(SUNLIGHTSERVICE_UPDATEPERIOD_UUID)
+};
 
 /*********************************************************************
  * LOCAL VARIABLES
@@ -92,6 +96,7 @@ static sunlightServiceCBs_t *pAppCBs = NULL;
 */
 // Characteristic "SunlightValue" Properties (for declaration)
 static uint8_t sunlightService_SunlightValueProps = GATT_PROP_NOTIFY;
+
 // Characteristic "SunlightValue" Value variable
 static uint8_t sunlightService_SunlightValueVal[SUNLIGHTSERVICE_SUNLIGHTVALUE_LEN] = {0};
 
@@ -103,6 +108,12 @@ static uint8 sunLightDesp[28] = "This is Sulight Description";
 
 // Service declaration
 static CONST gattAttrType_t sunlightServiceDecl = { ATT_BT_UUID_SIZE, sunlightServiceUUID };
+
+// Characteristic "sunlightService_UpdatePeriodProps" Properties (for declaration)
+static uint8_t sunlightService_UpdatePeriodProps = GATT_PROP_READ | GATT_PROP_WRITE;
+// Characteristic "UpdatePeriod" Value variable
+static uint8_t sunlightService_UpdatePeriodVal[SUNLIGHTSERVICE_UPDATEPERIOD_LEN] = {0};
+
 
 
 /*********************************************************************
@@ -152,7 +163,23 @@ static gattAttribute_t sunlightServiceAttrTbl[] =
       sunLightDesp
     },
 
-};
+    // UpdatePeriod Characteristic Declaration
+        {
+          { ATT_BT_UUID_SIZE, characterUUID },
+          GATT_PERMIT_READ,
+          0,
+          &sunlightService_UpdatePeriodProps
+        },
+          // UpdatePeriod Characteristic Value
+          {
+            { ATT_UUID_SIZE, sunlightService_UpdatePeriodUUID },
+            GATT_PERMIT_READ | GATT_PERMIT_WRITE,
+            0,
+            sunlightService_UpdatePeriodVal
+          },
+    };
+
+
 
 /*********************************************************************
  * LOCAL FUNCTIONS
