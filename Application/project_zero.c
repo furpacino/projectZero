@@ -456,6 +456,7 @@ static void ProjectZero_bootManagerCheck(PIN_Handle buttonPinHandle,
                                          uint8_t revertIo,
                                          uint8_t eraseIo);
 static void myClockSwiFxn(uintptr_t arg0);
+static void sunCharChanged(uint16_t connHandle, uint8_t paramID, uint16_t len, uint8_t *pValue);
 
 /*********************************************************************
  * EXTERN FUNCTIONS
@@ -506,7 +507,11 @@ static oadTargetCBs_t ProjectZero_oadCBs =
 {
     .pfnOadWrite = ProjectZero_processOadWriteCB // Write Callback.
 };
-
+// The type Data_ServiceCBs_t is defined in sunlightService.h
+static sunlightServiceCBs_t ProjectZero_Sunlight_ServiceCBs = {
+    .pfnChangeCb = sunCharChanged,
+    .pfnCfgChangeCb = NULL
+};
 /*********************************************************************
  * PUBLIC FUNCTIONS
  */
@@ -680,6 +685,7 @@ static void ProjectZero_init(void)
     LedService_RegisterAppCBs(&ProjectZero_LED_ServiceCBs);
     ButtonService_RegisterAppCBs(&ProjectZero_Button_ServiceCBs);
     DataService_RegisterAppCBs(&ProjectZero_Data_ServiceCBs);
+    SunlightService_RegisterAppCBs( &ProjectZero_Sunlight_ServiceCBs); // SOLUTION
 
     // Placeholder variable for characteristic intialization
     uint8_t initVal[40] = {0};
@@ -1317,6 +1323,7 @@ static void ProjectZero_processGapMessage(gapEventHdr_t *pMsg)
         // Cancel the OAD if one is going on
         // A disconnect forces the peer to re-identify
         OAD_cancel();
+        Clock_stop(Clock_handle(&myClock)); //SOLUTION
     }
     break;
 
@@ -3065,6 +3072,21 @@ void myClockSwiFxn(uintptr_t arg0)
   // Can't call blocking TI-RTOS calls or BLE APIs from here.
   // .. Send a message to the Task that something is afoot.
   ProjectZero_enqueueMsg(PZ_MSG_PERIODIC_TIMER, NULL); // Not sending any data here, just a signal
+}
+
+static void sunCharChanged(uint16_t connHandle, uint8_t paramID, uint16_t len, uint8_t *pValue)
+{
+
+    if((paramID == SUNLIGHTSERVICE_UPDATEPERIOD_ID) &&
+        (len == SUNLIGHTSERVICE_UPDATEPERIOD_LEN))
+    {
+        uint16_t myTimeoutInMs = BUILD_UINT16(pValue[0],
+                                              pValue[1]);
+        Clock_stop(Clock_handle(&myClock));
+        Clock_setPeriod(Clock_handle(&myClock), myTimeoutInMs * (1000/Clock_tickPeriod));
+        Clock_start(Clock_handle(&myClock));
+    }
+
 }
 
 /*********************************************************************
